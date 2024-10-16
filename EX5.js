@@ -1,5 +1,9 @@
 const express = require('express');
 const app = express();
+const cors = require ('cors')// Estava com problemas para rodar no postman dando erro de CORS, pesquisei e me foi indicado inserir esse require
+
+// Middleware para usar o CORS
+app.use(cors());
 
 app.use(express.json()); // Permite a leitura do JSON
 
@@ -52,7 +56,6 @@ app.get('/items/count', (req, res) => {
 });
 
 // Poeta 3000
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
 });
