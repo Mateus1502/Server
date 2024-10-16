@@ -1,8 +1,10 @@
 const express = require('express');
-const fs = require('fs'); // Módulo do Node.js para trabalhar com arquivos
 const app = express();
+const cors = require('cors'); // Estava com problemas para rodar no postman dando erro de CORS, pesquisei e me foi indicado inserir esse require
+const fs = require('fs');
 const port = 3000;
-
+// Middleware para usar o CORS
+app.use(cors());
 // Middleware para tratar dados JSON
 app.use(express.json());
 
@@ -41,5 +43,5 @@ app.post('/items', (req, res) => {
 
 // Iniciar o servidor
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+    console.log(`Servidor rodando em http://localhost:${port}`);
 });
