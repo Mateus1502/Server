@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const port = 3000;
 
 app.use(express.json()); // Permite JSON na requisição
 
@@ -39,8 +40,6 @@ app.patch('/items/:id', (req, res) => {
         res.status(404).json({ error: 'Item não encontrado' });
     }
 });
-
-
 
 // Servidor porta 3000
 app.listen(port, () => {
