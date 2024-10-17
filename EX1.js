@@ -1,10 +1,7 @@
 const express = require('express');
 const app = express();
-const cors = require('cors'); // Estava com problemas para rodar no postman dando erro de CORS, pesquisei e me foi indicado inserir esse require
 const fs = require('fs');
 const port = 3000;
-// Middleware para usar o CORS
-app.use(cors());
 // Middleware para tratar dados JSON
 app.use(express.json());
 
