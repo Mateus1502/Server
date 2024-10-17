@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 app.use(express.json()); // Middleware para permitir leitura de JSON
-//Middleware é uma camada de tradução oculta entre SO e os apps executados
+
 // Dados de exemplo
 let items = [
     { id: 1, name: 'Item 1', description: 'GOT' },
