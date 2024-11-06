@@ -1,58 +1,55 @@
 const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
-app.use(express.json()); // Permite a leitura do JSON
+app.use(express.json());
 
-// Dados
-let items = [
-    { id: 1, name: 'Item 1', description: 'Kendrick Lamar' },
-    { id: 2, name: 'Item 2', description: 'Travis Scott' },
-    { id: 3, name: 'Item 3', description: 'Kanye West' }
-];
-
-// Fazer a pesquisa dos itens (GET)
-app.get('/items/:id', (req, res) => {
-    const itemId = parseInt(req.params.id);
-    const item = items.find(i => i.id === itemId);
-
-    if (item) {
-        res.status(200).json(item);
+const db = new sqlite3.Database('./itemsdb.sqlite', (err) => {
+    if(err) {
+        console.err('Deu erro!');
     } else {
-        res.status(404).json({ error: 'Item não encontrado' });
+        console.log('Deu certo!');
     }
 });
 
-// Rota para atualizar parcialmente o campo name de um item (PATCH)
-app.patch('/items/:id', (req, res) => {
-    const itemId = parseInt(req.params.id);
-    const item = items.find(i => i.id === itemId);
-
-    if (item) {
-        if (req.body.name) {
-            item.name = req.body.name;
-            res.status(200).json(item); // Sucesso
-        } else {
-            res.status(400).json({ error: 'Campo "name" é obrigatório para atualizar' }); // Erro
+db.run(`CREATE TABLE IF NOT EXISTS items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    descricao TEXT,
+    dataCriacao TEXT DEFAULT CURRENT_TIMESTAMP)`, (err) => {
+        if (err) {
+            console.error('Deu erro ao criar a tabela');
         }
-    } else {
-        res.status(404).json({ error: 'Item não encontrado' }); // Erro 404
-    }
 });
 
-// Deletar os itens (DELETE)
-app.delete('/items', (req, res) => {
-    items = []; // Esvazia o array de itens
-    res.status(200).json({ message: 'Todos os itens foram removidos' });
+app.post("/items", (req,res)=>{
+    const  {name , descricao } = req.body;
+    const query = `INSERT INTO items(name, descricao) VALUES (?,?)`// ?? para impedir ataques maliciosos
+
+    db.run(query, [name, descricao], (err) => {
+        if (err){
+            res.status(400).json({message : err.message});
+
+        }else {
+            res.status(201).json({id: this.lastID , name , descricao});
+        }
+
+    })
+    
 });
 
-// Rota para contar o número de itens existentes (GET)
-app.get('/items/count', (req, res) => {
-    const count = items.length; // Comando para verificar quantos itens temos no array
-    res.status(200).json({ count }); // Mostra quantos itens tem no array
-});
+app.get('/items', (req,res) => {
+    const query = "SELECT * FROM  items";
+    db.run(query,[],(err,rows)=>{
+        if(err){
+            console.error({message:err.message});
+        }else{
+            res.status(200).json(rows);
+        }
+    })
 
-// Poeta 3000
+});
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
